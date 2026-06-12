@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Évaluation – Tableur MS Excel</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #f5f7fa;
+    --border: #d1d9e0;
+    --accent: #1a5fb4;
+    --accent2: #1a73e8;
+    --green: #1e8c45;
+    --red: #c0392b;
+    --orange: #d97706;
+    --text: #1a1a2e;
+    --muted: #5a6a7e;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  .wrapper { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+
+  /* Gate */
+  #gate { min-height:100vh; display:flex; align-items:center; justify-content:center; }
+  .gate-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:48px 40px; width:100%; max-width:460px; box-shadow:var(--shadow); text-align:center; }
+  .gate-logo { width:64px;height:64px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:16px; display:flex;align-items:center;justify-content:center; font-size:28px; margin:0 auto 20px; }
+  .gate-card h1 { font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px; }
+  .gate-card .gate-sub { font-size:14px;color:var(--muted);margin-bottom:28px; }
+  .gate-field { margin-bottom:16px; text-align:left; }
+  .gate-field label { display:block;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px; }
+  .gate-field input { width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s; }
+  .gate-field input:focus { border-color:var(--accent); }
+  .gate-error { color:var(--red);font-size:13px;margin-bottom:12px;display:none; }
+  .btn-start { width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.2s,transform 0.2s;margin-top:4px; }
+  .btn-start:hover { opacity:0.9;transform:translateY(-1px); }
+
+  /* Header */
+  #eval { display:none; }
+  .header { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 28px;margin-bottom:24px;box-shadow:var(--shadow);display:flex;align-items:center;gap:18px;flex-wrap:wrap; }
+  .header-icon { width:48px;height:48px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px; }
+  .header-text h1 { font-size:18px;font-weight:800;color:var(--text); }
+  .header-text .sub { font-size:12px;color:var(--muted);margin-top:3px; }
+  .header-student { margin-left:auto;text-align:right;font-size:13px;color:var(--muted); }
+  .header-student strong { display:block;font-size:15px;color:var(--accent);font-weight:700; }
+
+  /* Section */
+  .section-header { display:flex;align-items:center;gap:12px;margin:28px 0 16px; }
+  .section-bar { width:5px;height:26px;border-radius:3px;background:linear-gradient(to bottom,var(--accent),var(--accent2)); }
+  .section-header h2 { font-size:17px;font-weight:800;color:var(--text); }
+
+  /* Card */
+  .card { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px;box-shadow:var(--shadow); }
+  .card-title { font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:8px; }
+  .pts { background:#e8f0fe;color:var(--accent);font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid #c5d8fc; }
+
+  /* Ex1 */
+  .word-chips { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px; }
+  .chip { background:#fff8e1;border:1px solid #f6cc6a;color:#92610a;font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px; }
+  .fillblank-text { font-size:15px;line-height:2.4;color:var(--text); }
+  .blank { display:inline-block;background:#e8f0fe;border:1.5px dashed #92b4f4;border-radius:7px;padding:1px 6px;min-width:130px;vertical-align:middle; }
+  .blank select { background:transparent;border:none;color:var(--accent);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;outline:none;cursor:pointer;width:100%; }
+  .blank select option { background:#fff;color:var(--text); }
+  .syntax-box { background:#f0f4f8;border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-top:16px; }
+  .syntax-label { font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px; }
+  .syntax-line { display:flex;align-items:center;gap:4px;flex-wrap:wrap; }
+  .syn-fixed { font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);font-weight:700; }
+  .syn-blank { display:inline-block;background:#e8f0fe;border:1.5px dashed #92b4f4;border-radius:7px;padding:1px 6px;min-width:120px; }
+  .syn-blank select { background:transparent;border:none;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;outline:none;cursor:pointer;width:100%; }
+  .syn-blank select option { background:#fff;color:var(--text);font-family:'Outfit',sans-serif; }
+
+  /* Ex2 */
+  .tf-table { width:100%;border-collapse:collapse;font-size:14px; }
+  .tf-table th { background:#f0f4f8;color:var(--muted);font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:2px solid var(--border); }
+  .tf-table td { padding:12px;border-bottom:1px solid #e8ecf0;vertical-align:top; }
+  .tf-table tr:last-child td { border-bottom:none; }
+  .tf-num { color:var(--accent);font-weight:800;width:28px; }
+  .vf-btns { display:flex;gap:8px; }
+  .vf-btn { padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;white-space:nowrap; }
+  .vf-btn:hover { border-color:var(--accent);color:var(--accent); }
+  .vf-btn.sel-v { background:#d4edda;border-color:var(--green);color:var(--green); }
+  .vf-btn.sel-f { background:#fde8e8;border-color:var(--red);color:var(--red); }
+  .justif-input { width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none;margin-top:8px;display:none;transition:border-color 0.2s; }
+  .justif-input:focus { border-color:var(--accent); }
+
+  /* Ex3 */
+  .formula-box { font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#92610a;background:#fff8e1;border:1px solid #f6cc6a;padding:10px 16px;border-radius:10px;margin:10px 0 18px;display:inline-block; }
+  .q-item { margin-bottom:15px; }
+  .q-item label { display:block;font-size:14px;color:var(--text);margin-bottom:7px; }
+  .answer-input { width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;transition:border-color 0.2s; }
+  .answer-input:focus { border-color:var(--accent); }
+
+  /* Excel tables */
+  .excel-wrap { overflow-x:auto;border:1px solid #b0b8c8;border-radius:8px;margin-bottom:18px; }
+  .excel-tbl { border-collapse:collapse;font-size:13px;width:100%;min-width:440px; }
+  .excel-tbl td,.excel-tbl th { border:1px solid #b0b8c8;padding:6px 10px; }
+  .xh-col { background:#d9d9d9;color:#333;font-weight:700;font-family:'Outfit',sans-serif;font-size:12px;text-align:center; }
+  .xh-row { background:#d9d9d9;color:#333;font-weight:700;font-family:'Outfit',sans-serif;font-size:12px;text-align:center;width:30px; }
+  .x-header { background:#4472c4;color:#fff;font-weight:700;font-family:'Outfit',sans-serif;text-align:center; }
+  .x-data { background:#fff;color:#1a1a1a;text-align:center; }
+  .x-blue { background:#fff;color:#1a5fb4;font-weight:600;text-align:center; }
+  .x-total { background:#d6e4f7;color:#1a1a1a;font-weight:600;font-family:'Outfit',sans-serif;text-align:center; }
+  .x-empty { background:#fff; }
+
+  /* Atelier table */
+  .atbl { border-collapse:collapse;font-size:12px;width:100%;min-width:580px; }
+  .atbl td,.atbl th { border:1px solid #b0b8c8;padding:5px 7px; }
+  .at-colh { background:#d9d9d9;color:#333;font-weight:700;text-align:center;font-size:11px; }
+  .at-rowh { background:#d9d9d9;color:#333;font-weight:700;text-align:center;font-size:11px;width:26px; }
+  .at-title { background:#4472c4;color:#fff;font-weight:700;text-align:center;font-family:'Outfit',sans-serif; }
+  .at-header { background:#4472c4;color:#fff;font-weight:700;text-align:center;font-family:'Outfit',sans-serif;font-size:11px; }
+  .at-sh { background:#70ad47;color:#fff;font-weight:700;text-align:center;font-family:'Outfit',sans-serif;font-size:11px; }
+  .at-data { background:#fff;color:#1a1a1a;text-align:center; }
+  .at-name { background:#fff;color:#833c00;font-weight:700;text-align:left;padding-left:8px; }
+  .at-num { background:#fff;color:#1a1a1a;text-align:center; }
+  .at-total { background:#70ad47;color:#fff;font-weight:700;text-align:center;font-family:'Outfit',sans-serif; }
+  .at-green { background:#d5e8d4; }
+
+  /* Submit */
+  .submit-section { text-align:center;margin-top:36px; }
+  .btn-submit { background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:15px 52px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(26,91,180,0.3);transition:all 0.2s; }
+  .btn-submit:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,91,180,0.4); }
+
+  /* Results */
+  #results { display:none;margin-top:32px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;text-align:center;box-shadow:var(--shadow);animation:fadeUp 0.4s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+  .score-circle { width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 18px;font-weight:800; }
+  .sc-good { background:#d4edda;border:3px solid var(--green); }
+  .sc-avg  { background:#fff3cd;border:3px solid var(--orange); }
+  .sc-low  { background:#fde8e8;border:3px solid var(--red); }
+  .sc-big  { font-size:34px;color:var(--text); }
+  .sc-sm   { font-size:13px;color:var(--muted); }
+  .res-msg { font-size:18px;font-weight:700;margin-bottom:6px; }
+  .res-sub { font-size:14px;color:var(--muted); }
+  .breakdown { display:flex;justify-content:center;gap:14px;margin-top:20px;flex-wrap:wrap; }
+  .bk-item { background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 22px; }
+  .bk-lbl { font-size:12px;color:var(--muted);margin-bottom:4px; }
+  .bk-val { font-size:22px;font-weight:800;color:var(--accent); }
+  #corrections { margin-top:22px;text-align:left;font-size:13px; }
+  .c-row { background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:10px; }
+  .c-title { font-weight:800;color:var(--accent);margin-bottom:4px; }
+  .c-detail { color:var(--muted);line-height:1.8; }
+  .c-formula { font-family:'JetBrains Mono',monospace;color:var(--orange); }
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">📊</div>
+    <h1>Évaluation – Tableur MS Excel</h1>
+    <p class="gate-sub">Informatique &nbsp;·&nbsp; 2ème Année Collège &nbsp;·&nbsp; Collège ANNAHDA</p>
+    <div class="gate-field">
+      <label>Nom &amp; Prénom</label>
+      <input type="text" id="g-name" placeholder="Saisir votre nom complet...">
+    </div>
+    <div class="gate-field">
+      <label>Classe</label>
+      <input type="text" id="g-class" placeholder="Ex : 2AC1">
+    </div>
+    <p class="gate-error" id="gate-err">⚠️ Veuillez remplir votre nom et votre classe.</p>
+    <button class="btn-start" onclick="startEval()">Commencer l'évaluation →</button>
+  </div>
+</div>
+
+<!-- EVAL -->
+<div id="eval">
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-icon">📊</div>
+    <div class="header-text">
+      <h1>Évaluation – Tableur MS Excel</h1>
+      <div class="sub">Informatique &nbsp;·&nbsp; 2ème Année Collège &nbsp;·&nbsp; Collège ANNAHDA</div>
+    </div>
+    <div class="header-student">
+      <strong id="disp-name"></strong>
+      <span id="disp-class"></span>
+    </div>
+  </div>
+
+  <!-- PARTIE 1 -->
+  <div class="section-header">
+    <div class="section-bar"></div>
+    <h2>PARTIE 1 – THÉORIQUE &nbsp;<span style="font-weight:400;font-size:14px;color:var(--muted);">10 points</span></h2>
+  </div>
+
+  <!-- Exercice 1 -->
+  <div class="card">
+    <div class="card-title">Exercice 1 <span class="pts">2.5 pts</span></div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:12px;">Complète la définition avec les mots suivants :</p>
+    <div class="word-chips">
+      <span class="chip">arguments</span><span class="chip">nom spécifique</span>
+      <span class="chip">particuliers</span><span class="chip">prédéfinie</span>
+    </div>
+    <div class="fillblank-text">
+      Une fonction dans Excel est une formule
+      <span class="blank"><select id="b1"><option value="">— choisir —</option><option>prédéfinie</option><option>particuliers</option><option>arguments</option><option>nom spécifique</option></select></span>
+      qui permet d'effectuer des calculs et des traitements automatiques et
+      <span class="blank"><select id="b2"><option value="">— choisir —</option><option>prédéfinie</option><option>particuliers</option><option>arguments</option><option>nom spécifique</option></select></span>
+      sur des données. Elle prend des
+      <span class="blank"><select id="b3"><option value="">— choisir —</option><option>prédéfinie</option><option>particuliers</option><option>arguments</option><option>nom spécifique</option></select></span>
+      (plage de cellules ou valeurs) entre parenthèses et possède un
+      <span class="blank"><select id="b4"><option value="">— choisir —</option><option>prédéfinie</option><option>particuliers</option><option>arguments</option><option>nom spécifique</option></select></span>.
+    </div>
+    <div class="syntax-box">
+      <div class="syntax-label">Syntaxe générale</div>
+      <div class="syntax-line">
+        <span class="syn-fixed">=NOM_FONCTION(&nbsp;</span>
+        <span class="syn-blank"><select id="b5"><option value="">— choisir —</option><option>prédéfinie</option><option>particuliers</option><option>arguments</option><option>nom spécifique</option></select></span>
+        <span class="syn-fixed">&nbsp;)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exercice 2 -->
+  <div class="card">
+    <div class="card-title">Exercice 2 – Vrai ou Faux <span class="pts">4 pts</span></div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">Lis chaque affirmation, coche V ou F, puis justifie si c'est Faux.</p>
+    <table class="tf-table">
+      <thead>
+        <tr>
+          <th>N°</th><th>Affirmation</th><th style="width:110px;">V / F</th><th>Justification (si Faux)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tf-num">1</td>
+          <td>L'adresse absolue $A$1 change automatiquement quand on recopie une formule.</td>
+          <td><div class="vf-btns"><button class="vf-btn" onclick="selVF(this,'vf1','V')">V</button><button class="vf-btn" onclick="selVF(this,'vf1','F')">F</button></div><input type="hidden" id="vf1"></td>
+          <td><input class="justif-input" id="j1" placeholder="Justification..."></td>
+        </tr>
+        <tr>
+          <td class="tf-num">2</td>
+          <td>La fonction =SOMME(A1 ; A5) calcule la somme des cellules de A1 jusqu'à A5.</td>
+          <td><div class="vf-btns"><button class="vf-btn" onclick="selVF(this,'vf2','V')">V</button><button class="vf-btn" onclick="selVF(this,'vf2','F')">F</button></div><input type="hidden" id="vf2"></td>
+          <td><input class="justif-input" id="j2" placeholder="Justification..."></td>
+        </tr>
+        <tr>
+          <td class="tf-num">3</td>
+          <td>Le symbole $ (dollar) est utilisé pour créer une adresse absolue.</td>
+          <td><div class="vf-btns"><button class="vf-btn" onclick="selVF(this,'vf3','V')">V</button><button class="vf-btn" onclick="selVF(this,'vf3','F')">F</button></div><input type="hidden" id="vf3"></td>
+          <td><input class="justif-input" id="j3" placeholder="Justification..."></td>
+        </tr>
+        <tr>
+          <td class="tf-num">4</td>
+          <td>=MAX(B2:B6) calcule la valeur maximale d'une plage de cellules.</td>
+          <td><div class="vf-btns"><button class="vf-btn" onclick="selVF(this,'vf4','V')">V</button><button class="vf-btn" onclick="selVF(this,'vf4','F')">F</button></div><input type="hidden" id="vf4"></td>
+          <td><input class="justif-input" id="j4" placeholder="Justification..."></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Exercice 3 -->
+  <div class="card">
+    <div class="card-title">Exercice 3 <span class="pts">1.5 pts</span></div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:8px;">Observe l'exemple suivant et réponds aux questions :</p>
+    <div class="formula-box">Cellule D4 contient : =C4*$B$1</div>
+    <div class="q-item">
+      <label>a) Quelle est l'adresse <strong>relative</strong> dans cette formule ?</label>
+      <input class="answer-input" id="ex3a">
+    </div>
+    <div class="q-item">
+      <label>b) Quelle est l'adresse <strong>absolue</strong> dans cette formule ?</label>
+      <input class="answer-input" id="ex3b">
+    </div>
+    <div class="q-item">
+      <label>c) Si on recopie cette formule en D5, que va devenir la formule ?</label>
+      <input class="answer-input" id="ex3c">
+    </div>
+  </div>
+
+  <!-- Exercice 4 -->
+  <div class="card">
+    <div class="card-title">Exercice 4 <span class="pts">2 pts</span></div>
+    <div class="excel-wrap">
+      <table class="excel-tbl">
+        <thead>
+          <tr>
+            <th class="xh-col"></th><th class="xh-col">A</th><th class="xh-col">B</th>
+            <th class="xh-col">C</th><th class="xh-col">D</th><th class="xh-col">E</th><th class="xh-col">F</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="xh-row">1</td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">2</td><td class="x-empty"></td><td class="x-header">Produit</td><td class="x-header">Prix</td><td class="x-header">Quantité</td><td class="x-header">Prix Total</td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">3</td><td class="x-empty"></td><td class="x-data">Stylo</td><td class="x-blue">3</td><td class="x-blue">10</td><td class="x-blue">30</td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">4</td><td class="x-empty"></td><td class="x-data">Cahier</td><td class="x-blue">8</td><td class="x-blue">5</td><td class="x-blue">40</td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">5</td><td class="x-empty"></td><td class="x-data">Règle</td><td class="x-blue">5</td><td class="x-blue">8</td><td class="x-blue">40</td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">6</td><td class="x-empty"></td><td class="x-data">Gomme</td><td class="x-blue">2</td><td class="x-blue">15</td><td class="x-blue">30</td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">7</td><td class="x-empty"></td><td class="x-empty"></td><td class="x-total" colspan="2">Somme</td><td class="x-empty"></td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">8</td><td class="x-empty"></td><td class="x-empty"></td><td class="x-total" colspan="2">Moyenne</td><td class="x-empty"></td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">9</td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td></tr>
+          <tr><td class="xh-row">10</td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td><td class="x-empty"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="q-item">
+      <label>1. Écris la formule Excel pour calculer la <strong>somme</strong> des valeurs de la colonne <strong>Prix Total</strong> :</label>
+      <input class="answer-input" id="ex4a">
+    </div>
+    <div class="q-item">
+      <label>2. Écris la formule Excel pour calculer la <strong>moyenne</strong> des valeurs de la colonne <strong>Prix</strong> :</label>
+      <input class="answer-input" id="ex4b">
+    </div>
+  </div>
+
+  <!-- PARTIE 2 -->
+  <div class="section-header">
+    <div class="section-bar" style="background:linear-gradient(to bottom,#70ad47,#4caf50);"></div>
+    <h2>PARTIE 2 – PRATIQUE &nbsp;<span style="font-weight:400;font-size:14px;color:var(--muted);">10 points</span></h2>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Atelier – Tableau des contributions Fournitures Scolaires</div>
+    <div class="excel-wrap" style="margin-bottom:20px;">
+      <table class="atbl">
+        <thead>
+          <tr>
+            <th class="at-colh"></th><th class="at-colh">A</th><th class="at-colh">B</th>
+            <th class="at-colh">C</th><th class="at-colh">D</th><th class="at-colh">E</th>
+            <th class="at-colh">F</th><th class="at-colh">G</th><th class="at-colh">H</th>
+            <th class="at-colh">I</th><th class="at-colh">J</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="at-rowh">1</td><td class="at-data"></td>
+            <td class="at-title" colspan="8">Tableau des contributions — Fournitures Scolaires</td>
+            <td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">2</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+            <td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">3</td><td class="at-data"></td>
+            <td class="at-header">Prénom</td><td class="at-header">Versement 1</td><td class="at-header">Versement 2</td>
+            <td class="at-header">Versement 3</td><td class="at-header">Versement 4</td><td class="at-header">Versement 5</td>
+            <td class="at-sh">Somme</td><td class="at-sh">Moyenne</td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">4</td><td class="at-data"></td>
+            <td class="at-name">Ilhame</td><td class="at-num">22,00</td><td class="at-num">8,00</td>
+            <td class="at-num">15,00</td><td class="at-num">5,00</td><td class="at-num">10,00</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">5</td><td class="at-data"></td>
+            <td class="at-name">Karim</td><td class="at-num">9,00</td><td class="at-num">11,00</td>
+            <td class="at-num">8,00</td><td class="at-num">5,00</td><td class="at-num">22,00</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">6</td><td class="at-data"></td>
+            <td class="at-name">Nadia</td><td class="at-num">10,00</td><td class="at-num">21,00</td>
+            <td class="at-num">15,00</td><td class="at-num">12,00</td><td class="at-num">10,00</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">7</td><td class="at-data"></td>
+            <td class="at-name">Youssef</td><td class="at-num">5,00</td><td class="at-num">21,00</td>
+            <td class="at-num">15,00</td><td class="at-num">5,00</td><td class="at-num">5,00</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">8</td><td class="at-data"></td>
+            <td class="at-name">Imane</td><td class="at-num">9,00</td><td class="at-num">21,00</td>
+            <td class="at-num">15,00</td><td class="at-num">14,00</td><td class="at-num">5,00</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">9</td><td class="at-data"></td>
+            <td class="at-name">Anas</td><td class="at-num">13,00</td><td class="at-num">21,00</td>
+            <td class="at-num">9,00</td><td class="at-num">5,00</td><td class="at-num">17,00</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">10</td><td class="at-data"></td>
+            <td class="at-total" colspan="6">Total</td>
+            <td class="at-green"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">11</td><td class="at-data"></td>
+            <td class="at-total" colspan="6">Le versement le plus élevé</td>
+            <td class="at-green"></td><td class="at-data"></td><td class="at-data"></td>
+          </tr>
+          <tr>
+            <td class="at-rowh">12</td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+            <td class="at-data"></td><td class="at-data"></td><td class="at-data"></td><td class="at-data"></td>
+            <td class="at-data"></td><td class="at-data"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="q-item">
+      <label><strong>Q3.</strong> Formule pour calculer le <strong>total des versements d'Ilhame</strong> dans H4 :</label>
+      <input class="answer-input" id="p2q3">
+    </div>
+    <div class="q-item">
+      <label><strong>Q5.</strong> Formule pour calculer la <strong>moyenne des versements d'Ilhame</strong> dans I4 :</label>
+      <input class="answer-input" id="p2q5">
+    </div>
+    <div class="q-item">
+      <label><strong>Q7.</strong> Formule pour calculer le <strong>total de tous les élèves</strong> dans H10 :</label>
+      <input class="answer-input" id="p2q7">
+    </div>
+    <div class="q-item">
+      <label><strong>Q8.</strong> Formule pour déterminer le <strong>versement le plus élevé</strong> dans H11 :</label>
+      <input class="answer-input" id="p2q8">
+    </div>
+  </div>
+
+  <div class="submit-section">
+    <button class="btn-submit" onclick="submitEval()">✅ Soumettre l'évaluation</button>
+  </div>
+
+  <div id="results">
+    <div id="sc-div"></div>
+    <div id="res-msg" class="res-msg"></div>
+    <div id="res-sub" class="res-sub"></div>
+    <div class="breakdown" id="bk-div"></div>
+    <div id="corrections"></div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function startEval(){
+  const name=document.getElementById('g-name').value.trim();
+  const cls=document.getElementById('g-class').value.trim();
+  if(!name||!cls){document.getElementById('gate-err').style.display='block';return;}
+  document.getElementById('gate').style.display='none';
+  document.getElementById('eval').style.display='block';
+  document.getElementById('disp-name').textContent=name;
+  document.getElementById('disp-class').textContent='Classe : '+cls;
+  window.scrollTo(0,0);
+}
+
+function selVF(btn,id,val){
+  btn.closest('tr').querySelectorAll('.vf-btn').forEach(b=>b.classList.remove('sel-v','sel-f'));
+  btn.classList.add(val==='V'?'sel-v':'sel-f');
+  document.getElementById(id).value=val;
+  const j=document.getElementById(id.replace('vf','j'));
+  j.style.display=val==='F'?'block':'none';
+  if(val==='V')j.value='';
+}
+
+function norm(s){return s.trim().toLowerCase().replace(/\s+/g,'').replace(/;/g,':');}
+function chk(inp,arr){return arr.some(c=>norm(inp)===norm(c));}
+
+function submitEval(){
+  let score=0,corr='';
+
+  // Ex1 – 5 blanks × 0.5
+  const ans1=[{id:'b1',ok:'prédéfinie'},{id:'b2',ok:'particuliers'},{id:'b3',ok:'arguments'},{id:'b4',ok:'nom spécifique'},{id:'b5',ok:'arguments'}];
+  let s1=0;
+  ans1.forEach(q=>{if(document.getElementById(q.id).value===q.ok)s1+=0.5;});
+  score+=s1;
+  corr+=`<div class="c-row"><div class="c-title">Exercice 1 — ${s1.toFixed(1)}/2.5 pts</div><div class="c-detail">prédéfinie · particuliers · arguments · nom spécifique · syntaxe : <span class="c-formula">arguments</span></div></div>`;
+
+  // Ex2 – 1pt each
+  const vfOk={vf1:'F',vf2:'F',vf3:'V',vf4:'V'};
+  let s2=0;
+  Object.keys(vfOk).forEach(k=>{if(document.getElementById(k).value===vfOk[k])s2+=1;});
+  score+=s2;
+  corr+=`<div class="c-row"><div class="c-title">Exercice 2 — ${s2}/4 pts</div><div class="c-detail">1 : F — L'adresse absolue $A$1 ne change pas lors de la recopie.<br>2 : F — =SOMME(A1;A5) calcule seulement A1 et A5. Pour une plage : =SOMME(A1:A5).<br>3 : V &nbsp;|&nbsp; 4 : V</div></div>`;
+
+  // Ex3 – 0.5 each
+  let s3=0;
+  if(norm(document.getElementById('ex3a').value).includes('c4'))s3+=0.5;
+  if(norm(document.getElementById('ex3b').value).includes('$b$1'))s3+=0.5;
+  if(chk(document.getElementById('ex3c').value,['=c5*$b$1','=C5*$B$1']))s3+=0.5;
+  score+=s3;
+  corr+=`<div class="c-row"><div class="c-title">Exercice 3 — ${s3}/1.5 pts</div><div class="c-detail">a) C4 &nbsp;|&nbsp; b) $B$1 &nbsp;|&nbsp; c) <span class="c-formula">=C5*$B$1</span></div></div>`;
+
+  // Ex4 – 1pt each
+  let s4=0;
+  if(chk(document.getElementById('ex4a').value,['=SOMME(E3:E6)','=somme(e3:e6)']))s4+=1;
+  if(chk(document.getElementById('ex4b').value,['=MOYENNE(C3:C6)','=moyenne(c3:c6)']))s4+=1;
+  score+=s4;
+  corr+=`<div class="c-row"><div class="c-title">Exercice 4 — ${s4}/2 pts</div><div class="c-detail">1 : <span class="c-formula">=SOMME(E3:E6)</span> &nbsp;|&nbsp; 2 : <span class="c-formula">=MOYENNE(C3:C6)</span></div></div>`;
+
+  // P2 – 2.5pt each
+  let s5=0;
+  if(chk(document.getElementById('p2q3').value,['=SOMME(C4:G4)','=somme(c4:g4)']))s5+=2.5;
+  if(chk(document.getElementById('p2q5').value,['=MOYENNE(C4:G4)','=moyenne(c4:g4)']))s5+=2.5;
+  if(chk(document.getElementById('p2q7').value,['=SOMME(H4:H9)','=somme(h4:h9)']))s5+=2.5;
+  if(chk(document.getElementById('p2q8').value,['=MAX(H4:H9)','=max(h4:h9)']))s5+=2.5;
+  score+=s5;
+  corr+=`<div class="c-row"><div class="c-title">Partie Pratique — ${s5}/10 pts</div><div class="c-detail">Q3 : <span class="c-formula">=SOMME(C4:G4)</span><br>Q5 : <span class="c-formula">=MOYENNE(C4:G4)</span><br>Q7 : <span class="c-formula">=SOMME(H4:H9)</span><br>Q8 : <span class="c-formula">=MAX(H4:H9)</span></div></div>`;
+
+  const total=Math.min(score,20);
+  const pct=(total/20)*100;
+  const cls2=pct>=70?'sc-good':pct>=50?'sc-avg':'sc-low';
+  const emoji=pct>=70?'🌟':pct>=50?'📚':'💪';
+  const msg=pct>=70?'Excellent travail !':pct>=50?'Bon effort, continue !':'Courage, tu peux mieux faire !';
+
+  document.getElementById('sc-div').innerHTML=`<div class="score-circle ${cls2}"><div class="sc-big">${total.toFixed(1)}</div><div class="sc-sm">/ 20</div></div>`;
+  document.getElementById('res-msg').textContent=emoji+' '+msg;
+  document.getElementById('res-sub').textContent='Score : '+total.toFixed(1)+' / 20 pts';
+  document.getElementById('bk-div').innerHTML=`<div class="bk-item"><div class="bk-lbl">Théorique</div><div class="bk-val">${(s1+s2+s3+s4).toFixed(1)}/10</div></div><div class="bk-item"><div class="bk-lbl">Pratique</div><div class="bk-val">${s5.toFixed(1)}/10</div></div>`;
+  document.getElementById('corrections').innerHTML='<p style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">📝 Corrections</p>'+corr;
+
+  const r=document.getElementById('results');
+  r.style.display='block';
+  r.scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
